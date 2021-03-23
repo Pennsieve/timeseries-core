@@ -25,17 +25,17 @@ node {
             throw e
         }
     }
-    // stage("Test") {
-    //     try {
-    //         withCredentials(creds) {
-    //             sh "$sbt test"
-    //             junit 'target/test-reports/*.xml'
-    //         }
-    //     } catch (e) {
-    //         slackSend(color: '#b20000', message: "FAILED: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL}) by ${authorName}")
-    //         throw e
-    //     }
-    // }
+    stage("Test") {
+        try {
+            withCredentials(creds) {
+                sh "$sbt test"
+                junit 'target/test-reports/*.xml'
+            }
+        } catch (e) {
+            slackSend(color: '#b20000', message: "FAILED: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL}) by ${authorName}")
+            throw e
+        }
+    }
     if (env.BRANCH_NAME == "master") {
         stage('Deploy') {
             try {
