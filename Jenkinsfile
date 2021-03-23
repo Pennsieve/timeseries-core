@@ -1,23 +1,21 @@
-node {
+node("executor") {
     checkout scm
     def authorName = sh(returnStdout: true, script: 'git --no-pager show --format="%an" --no-patch')
-    def buildEnv
-    if (env.BRANCH_NAME == "master") {
-        buildEnv = "prod"
-    } else {
-        buildEnv = "dev"
-    }
-    def creds = [
-        usernamePassword(
-            credentialsId: "pennsieve-nexus-ci-login",
-            usernameVariable: "PENNSIEVE_NEXUS_USER",
-            passwordVariable: "PENNSIEVE_NEXUS_PW"
-        )
-    ]
-    def sbt = "sbt -Dsbt.log.noformat=true -Dbuild-env=${buildEnv}"
+
+    def commitHash = sh(returnStdout: true, script: 'git rev-parse HEAD | cut -c-7').trim()
+    def imageTag = "${env.BUILD_NUMBER}-${commitHash}"
+
+    def sbt = "sbt -Dsbt.log.noformat=true -Dversion=$imageTag"
+
+    def pennsieveNexusCreds = usernamePassword(
+        credentialsId: "pennsieve-nexus-ci-login",
+        usernameVariable: "PENNSIEVE_NEXUS_USER",
+        passwordVariable: "PENNSIEVE_NEXUS_PW"
+    )
+
     stage("Build") {
         try {
-            withCredentials(creds) {
+            withCredentials([pennsieveNexusCreds]) {
                 sh "$sbt clean compile"
             }
         } catch (e) {
@@ -27,7 +25,7 @@ node {
     }
     stage("Test") {
         try {
-            withCredentials(creds) {
+            withCredentials([pennsieveNexusCreds]) {
                 sh "$sbt test"
                 junit 'target/test-reports/*.xml'
             }
@@ -36,10 +34,10 @@ node {
             throw e
         }
     }
-    if (env.BRANCH_NAME == "master") {
-        stage('Deploy') {
+    if (env.BRANCH_NAME == "main") {
+        stage('Publish') {
             try {
-                withCredentials(creds) {
+                withCredentials([pennsieveNexusCreds]) {
                     sh "$sbt publish"
                 }
             } catch (e) {
