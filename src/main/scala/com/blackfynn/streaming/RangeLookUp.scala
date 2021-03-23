@@ -2,7 +2,7 @@
 **   Copyright (c) 2017 Blackfynn, Inc. All Rights Reserved.
 **/
 
-package com.blackfynn.streaming
+package com.pennsieve.streaming
 
 /**
   * Created by jsnavely on 1/18/17.

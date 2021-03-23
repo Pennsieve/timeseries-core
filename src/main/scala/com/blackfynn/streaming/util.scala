@@ -2,7 +2,7 @@
   * *   Copyright (c) 2017 Blackfynn, Inc. All Rights Reserved.
   **/
 
-package com.blackfynn.streaming
+package com.pennsieve.streaming
 
 import java.io.FileOutputStream
 import java.nio.ByteBuffer

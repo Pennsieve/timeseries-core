@@ -1,38 +1,20 @@
 name := "timeseries-core"
 
-organization := "com.blackfynn"
+organization := "com.pennsieve"
 
 scalaVersion := "2.12.7"
 
-val isProd = sys.props
-  .get("build-env")
-  .exists(_ == "prod")
+version := sys.props.get("version").getOrElse("SNAPSHOT")
 
-def envVersion(version: String): String = {
-  if (isProd) version
-  else s"$version-SNAPSHOT"
-}
-
-version := envVersion("1.2.13")
-
-isSnapshot := !isProd
-
-val pennsieveCoreVersion = "bootstrap-SNAPSHOT"
+val pennsieveCoreVersion = "com.pennsieve-SNAPSHOT"
 
 resolvers ++= Seq(
   "Spray" at "https://repo.spray.io",
   Resolver.bintrayRepo("commercetools", "maven"),
   Resolver.typesafeRepo("releases"),
   "JBoss" at "https://repository.jboss.org/",
-  "pennsieve-maven-proxy" at "https://nexus.pennsieve.cc/repository/maven-public",
-  Resolver.url(
-    "pennsieve-ivy-proxy",
-    url("https://nexus.pennsieve.cc/repository/ivy-public/")
-  )(
-    Patterns(
-      "[organization]/[module]/(scala_[scalaVersion]/)(sbt_[sbtVersion]/)[revision]/[type]s/[artifact](-[classifier]).[ext]"
-    )
-  ),
+  "Pennsieve Maven Proxy" at "https://nexus.pennsieve.cc/repository/maven-public",
+  "Pennsieve Snapshots" at "https://nexus.pennsieve.cc/repository/maven-snapshots",
   Resolver.sonatypeRepo("snapshots"),
   Resolver.sonatypeRepo("releases")
 )
@@ -46,29 +28,25 @@ libraryDependencies ++= Seq(
   "org.scalikejdbc" %% "scalikejdbc-test" % "2.5.0" % "test",
   "org.scalamock" %% "scalamock-scalatest-support" % "3.4.2" % "test",
   "com.dimafeng" %% "testcontainers-scala" % "0.38.4" % "test",
-  "com.blackfynn" %% "pennsieve-core" % s"$pennsieveCoreVersion" % "test" classifier "tests"
+  "com.pennsieve" %% "pennsieve-core" % s"$pennsieveCoreVersion" % "test" classifier "tests"
 )
 
 publishMavenStyle := true
 
 publishTo := {
   val nexus = "https://nexus.pennsieve.cc/repository"
-  if (isProd) {
-    Some("Nexus Realm" at s"$nexus/maven-releases")
-  } else {
+  if (isSnapshot.value) {
     Some("Nexus Realm" at s"$nexus/maven-snapshots")
+  } else {
+    Some("Nexus Realm" at s"$nexus/maven-releases")
   }
 }
 
 credentials += Credentials(
   "Sonatype Nexus Repository Manager",
   "nexus.pennsieve.cc",
-  sys.env
-    .get("PENNSIEVE_NEXUS_USER")
-    .getOrElse("pennsieveci"),
-  sys.env
-    .get("PENNSIEVE_NEXUS_PW")
-    .getOrElse("")
+  sys.env("PENNSIEVE_NEXUS_USER"),
+  sys.env("PENNSIEVE_NEXUS_PW")
 )
 
 logBuffered in Test := false

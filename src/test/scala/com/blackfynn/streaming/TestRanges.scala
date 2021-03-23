@@ -2,11 +2,11 @@
 // **   Copyright (c) 2017 Blackfynn, Inc. All Rights Reserved.
 // **/
 
-// package com.blackfynn.streaming
+// package com.pennsieve.streaming
 
 // import org.junit.runner.Description
 // import org.scalatest.{ BeforeAndAfterAll, DoNotDiscover, FlatSpec }
-// import com.blackfynn.test.helpers.DBTestMixin
+// import com.pennsieve.test.helpers.DBTestMixin
 // import scalikejdbc.AutoSession
 // import scalikejdbc.ConnectionPool
 

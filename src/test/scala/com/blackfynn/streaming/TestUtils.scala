@@ -2,9 +2,9 @@
 // **   Copyright (c) 2017 Blackfynn, Inc. All Rights Reserved.
 // **/
 
-// package com.blackfynn.streaming
+// package com.pennsieve.streaming
 
-// import com.blackfynn.streaming.util.patch
+// import com.pennsieve.streaming.util.patch
 // import org.scalatest.FlatSpec
 // /**
 //   * Created by jsnavely on 3/21/17.

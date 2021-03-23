@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package com.blackfynn.streaming;
+package com.pennsieve.streaming;
 
 message Event {
   string source = 1;     //channel id
