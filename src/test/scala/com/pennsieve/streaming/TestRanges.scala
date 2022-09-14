@@ -4,7 +4,6 @@
 
 package com.pennsieve.streaming
 
-import org.junit.runner.Description
 import org.scalatest.BeforeAndAfterAll
 import com.pennsieve.test.{PersistantTestContainers, PostgresDockerContainer}
 import org.scalatest.flatspec.AnyFlatSpec

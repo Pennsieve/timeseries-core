@@ -2,7 +2,13 @@ name := "timeseries-core"
 
 organization := "com.pennsieve"
 
-scalaVersion := "2.12.7"
+lazy val scala212 = "2.12.7"
+lazy val scala213 = "2.13.8"
+lazy val supportedScalaVersions = List(scala212, scala213)
+
+scalaVersion := scala212
+
+crossScalaVersions := supportedScalaVersions
 
 version := sys.props.get("version").getOrElse("SNAPSHOT")
 
@@ -26,7 +32,6 @@ libraryDependencies ++= Seq(
   "org.scalikejdbc" %% "scalikejdbc-config" % scalikejdbcVersion,
   "org.scalatest" %% "scalatest" % "3.2.12" % "test",
   "org.scalikejdbc" %% "scalikejdbc-test" % scalikejdbcVersion % "test",
-  "org.scalamock" %% "scalamock-scalatest-support" % "3.4.2" % "test",
   "com.dimafeng" %% "testcontainers-scala" % "0.40.1" % "test",
   "com.pennsieve" %% "pennsieve-core" % s"$pennsieveCoreVersion" % "test" classifier "tests"
 )
