@@ -4,15 +4,10 @@ organization := "com.pennsieve"
 
 scalaVersion := "2.12.7"
 
-scalacOptions += "-feature"
-
 version := sys.props.get("version").getOrElse("SNAPSHOT")
 
-val pennsieveCoreVersion = "166-27f7fae"
 
 resolvers ++= Seq(
-  "Spray" at "https://repo.spray.io",
-  Resolver.bintrayRepo("commercetools", "maven"),
   Resolver.typesafeRepo("releases"),
   "JBoss" at "https://repository.jboss.org/",
   "Pennsieve Maven Proxy" at "https://nexus.pennsieve.cc/repository/maven-public",
@@ -21,6 +16,7 @@ resolvers ++= Seq(
   Resolver.sonatypeRepo("releases")
 )
 
+lazy val pennsieveCoreVersion = "166-27f7fae"
 lazy val scalikejdbcVersion = "3.5.0"
 
 libraryDependencies ++= Seq(
