@@ -22,7 +22,7 @@ resolvers ++= Seq(
   Resolver.sonatypeRepo("releases")
 )
 
-lazy val pennsieveCoreVersion = "166-27f7fae"
+lazy val pennsieveCoreVersion = "195-8c3149d"
 lazy val scalikejdbcVersion = "3.5.0"
 
 libraryDependencies ++= Seq(
