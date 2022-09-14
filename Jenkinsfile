@@ -16,7 +16,7 @@ node("executor") {
     stage("Build") {
         try {
             withCredentials([pennsieveNexusCreds]) {
-                sh "$sbt clean compile"
+                sh "$sbt clean +compile"
             }
         } catch (e) {
             slackSend(color: '#b20000', message: "FAILED: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL}) by ${authorName}")
@@ -26,7 +26,7 @@ node("executor") {
     stage("Test") {
         try {
             withCredentials([pennsieveNexusCreds]) {
-                sh "$sbt test"
+                sh "$sbt +test"
                 junit 'target/test-reports/*.xml'
             }
         } catch (e) {
@@ -38,7 +38,7 @@ node("executor") {
         stage('Publish') {
             try {
                 withCredentials([pennsieveNexusCreds]) {
-                    sh "$sbt publish"
+                    sh "$sbt +publish"
                 }
             } catch (e) {
                 slackSend(color: '#b20000', message: "FAILED: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL}) by ${authorName}")

@@ -37,9 +37,9 @@ class RangeLookUp(rangeQuery:String, s3_baseUrl : String) {
 
   def lookup(qstart: Long, qend: Long, channel: String)(implicit session: DBSession = autoSession): List[LookupResultRow] =
     rangeQuerySql
-      .bindByName('channel -> channel, 'qstart -> qstart, 'qend -> qend)
+      .bindByName(Symbol("channel") -> channel, Symbol("qstart") -> qstart, Symbol("qend") -> qend)
       .map(mapLookupResult)
-      .list
+      .list()
       .apply()
       .flatten
 
@@ -48,7 +48,7 @@ class RangeLookUp(rangeQuery:String, s3_baseUrl : String) {
   def addRangeLookup(l: LookupResultRow)(implicit session: DBSession = autoSession): Long =
     sql"""INSERT INTO timeseries.ranges (channel, location, rate, range, follows_gap) VALUES (?, ?, ?, ?::int8range, false)"""
       .bind(l.channel, l.file, l.sampleRate, makeRangeString(l.min, l.max))
-      .updateAndReturnGeneratedKey
+      .updateAndReturnGeneratedKey()
       .apply()
 
   def updateRangeLookup(l: LookupResultRow)(implicit session: DBSession = autoSession): Int =
@@ -60,7 +60,7 @@ class RangeLookUp(rangeQuery:String, s3_baseUrl : String) {
   def get(channelId: String)(implicit session: DBSession = autoSession): List[LookupResultRow] =
     sql"""SELECT id, location, channel, rate, lower(range) as lo, upper(range) as hi from timeseries.ranges where channel = $channelId"""
       .map(mapLookupResult)
-      .list
+      .list()
       .apply()
       .flatten
 

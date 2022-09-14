@@ -12,6 +12,7 @@ crossScalaVersions := supportedScalaVersions
 
 version := sys.props.get("version").getOrElse("SNAPSHOT")
 
+scalacOptions ++= Seq("-deprecation", "-feature")
 
 resolvers ++= Seq(
   Resolver.typesafeRepo("releases"),
@@ -57,8 +58,6 @@ credentials += Credentials(
 Test / logBuffered := false
 
 Test / publishArtifact := true
-
-addCompilerPlugin("org.psywerx.hairyfotr" %% "linter" % "0.1.17")
 
 Compile / PB.targets := Seq(
   scalapb.gen(flatPackage = true) -> (Compile / sourceManaged).value
