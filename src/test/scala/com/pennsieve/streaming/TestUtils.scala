@@ -6,6 +6,8 @@ package com.pennsieve.streaming
 
 import com.pennsieve.streaming.util.patch
 import org.scalatest.FlatSpec
+import scala.language.postfixOps
+
 /**
   * Created by jsnavely on 3/21/17.
   */

@@ -4,6 +4,8 @@ organization := "com.pennsieve"
 
 scalaVersion := "2.12.7"
 
+scalacOptions += "-feature"
+
 version := sys.props.get("version").getOrElse("SNAPSHOT")
 
 val pennsieveCoreVersion = "com.pennsieve-SNAPSHOT"
@@ -49,32 +51,33 @@ credentials += Credentials(
   sys.env("PENNSIEVE_NEXUS_PW")
 )
 
-logBuffered in Test := false
+Test / logBuffered := false
 
-publishArtifact in Test := true
+Test / publishArtifact := true
 
 addCompilerPlugin("org.psywerx.hairyfotr" %% "linter" % "0.1.17")
 
-PB.targets in Compile := Seq(
+Compile / PB.targets := Seq(
   scalapb.gen(flatPackage = true) -> (sourceManaged in Compile).value
 )
 
 // sbt-docker configuration
 enablePlugins(sbtdocker.DockerPlugin)
 
-buildOptions in docker := BuildOptions(
+docker / buildOptions := BuildOptions(
   cache = false
 )
 
-dockerfile in docker := {
-  val jarFile: File = sbt.Keys.`package`.in(Compile, packageBin).value
+docker / dockerfile := {
+  val jarFile: File = (Compile / packageBin / sbt.Keys.`package`).value
+  //val jarFile: File = sbt.Keys.`package`.in(Compile, packageBin).value
   new Dockerfile {
     from("java")
     copy(jarFile, "target/scala-2.11/timeseries-core_2.11-1.1.1-SNAPSHOT.jar")
   }
 }
 
-imageNames in docker := Seq(
+docker / imageNames := Seq(
   ImageName(s"${organization.value}/api:latest"),
   ImageName(
     s"${organization.value}/api:${sys.props.getOrElse("docker-version", version.value)}"
