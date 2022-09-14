@@ -5,15 +5,16 @@
 package com.pennsieve.streaming
 
 import org.junit.runner.Description
-import org.scalatest.{ BeforeAndAfterAll, DoNotDiscover, FlatSpec }
+import org.scalatest.BeforeAndAfterAll
 import com.pennsieve.test.{PersistantTestContainers, PostgresDockerContainer}
+import org.scalatest.flatspec.AnyFlatSpec
 import scalikejdbc.AutoSession
 import scalikejdbc.ConnectionPool
 
 /**
   * Created by jsnavely on 4/26/17.
   */
-class TestRanges extends FlatSpec with BeforeAndAfterAll
+class TestRanges extends AnyFlatSpec with BeforeAndAfterAll
     with PersistantTestContainers
     with PostgresDockerContainer {
 

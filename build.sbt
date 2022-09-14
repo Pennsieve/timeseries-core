@@ -8,7 +8,7 @@ scalacOptions += "-feature"
 
 version := sys.props.get("version").getOrElse("SNAPSHOT")
 
-val pennsieveCoreVersion = "com.pennsieve-SNAPSHOT"
+val pennsieveCoreVersion = "166-27f7fae"
 
 resolvers ++= Seq(
   "Spray" at "https://repo.spray.io",
@@ -21,15 +21,17 @@ resolvers ++= Seq(
   Resolver.sonatypeRepo("releases")
 )
 
+lazy val scalikejdbcVersion = "3.5.0"
+
 libraryDependencies ++= Seq(
   "com.typesafe.akka" %% "akka-actor" % "2.6.5",
   "org.postgresql" % "postgresql" % "9.4-1200-jdbc41",
-  "org.scalikejdbc" %% "scalikejdbc" % "2.5.0",
-  "org.scalikejdbc" %% "scalikejdbc-config" % "2.5.0",
-  "org.scalatest" %% "scalatest" % "3.0.3" % "test",
-  "org.scalikejdbc" %% "scalikejdbc-test" % "2.5.0" % "test",
+  "org.scalikejdbc" %% "scalikejdbc" % scalikejdbcVersion,
+  "org.scalikejdbc" %% "scalikejdbc-config" % scalikejdbcVersion,
+  "org.scalatest" %% "scalatest" % "3.2.12" % "test",
+  "org.scalikejdbc" %% "scalikejdbc-test" % scalikejdbcVersion % "test",
   "org.scalamock" %% "scalamock-scalatest-support" % "3.4.2" % "test",
-  "com.dimafeng" %% "testcontainers-scala" % "0.38.4" % "test",
+  "com.dimafeng" %% "testcontainers-scala" % "0.40.1" % "test",
   "com.pennsieve" %% "pennsieve-core" % s"$pennsieveCoreVersion" % "test" classifier "tests"
 )
 
@@ -58,7 +60,7 @@ Test / publishArtifact := true
 addCompilerPlugin("org.psywerx.hairyfotr" %% "linter" % "0.1.17")
 
 Compile / PB.targets := Seq(
-  scalapb.gen(flatPackage = true) -> (sourceManaged in Compile).value
+  scalapb.gen(flatPackage = true) -> (Compile / sourceManaged).value
 )
 
 // sbt-docker configuration
