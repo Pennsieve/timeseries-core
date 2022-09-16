@@ -42,7 +42,7 @@ object util {
       Some(CombinableSegment(cs1.startTime, cs2.endTime, cs1.data ++ cs2.data, cs1.period))
     } else if (cs2.startTime > cs1.startTime && cs2.startTime < cs1.endTime) {
       //c2 overlaps with c1
-      val startIndex = Math.round((cs2.startTime - cs1.startTime) / period)
+      val startIndex = Math.round((cs2.startTime - cs1.startTime) / period.toFloat)
       val newData: Seq[Double] = patch(cs1.data, cs2.data, startIndex)
       val newEnd = Math.max(cs1.endTime, cs2.endTime)
       Some(CombinableSegment(cs1.startTime, newEnd, newData, period))

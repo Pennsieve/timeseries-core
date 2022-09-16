@@ -32,9 +32,9 @@ class UnitRangeLookUp(rangeQuerySQL : String, s3_baseUrl : String) {
 
   def lookup(qstart: Long, qend: Long, channel: String)(implicit session: DBSession = autoSession): List[UnitRangeEntry] =
     rangeQuery
-      .bindByName('channel -> channel, 'qstart -> qstart, 'qend -> qend)
+      .bindByName(Symbol("channel") -> channel, Symbol("qstart") -> qstart, Symbol("qend") -> qend)
       .map(mapLookupResult)
-      .list
+      .list()
       .apply()
       .flatten
 
@@ -45,7 +45,7 @@ class UnitRangeLookUp(rangeQuerySQL : String, s3_baseUrl : String) {
   def addRangeLookup(l: UnitRangeEntry)(implicit session: DBSession = autoSession): Long = {
     sql"""INSERT INTO timeseries.unit_ranges (channel, range, count, tsindex, tsblob) VALUES (?, ?::int8range, ?, ?, ?)"""
       .bind(l.channel, makeRangeString(l.min, l.max), l.count,l.tsindex, l.tsblob)
-      .updateAndReturnGeneratedKey
+      .updateAndReturnGeneratedKey()
       .apply()
   }
 }

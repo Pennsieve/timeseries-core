@@ -5,11 +5,14 @@
 package com.pennsieve.streaming
 
 import com.pennsieve.streaming.util.patch
-import org.scalatest.FlatSpec
+import org.scalatest.flatspec.AnyFlatSpec
+
+import scala.language.postfixOps
+
 /**
   * Created by jsnavely on 3/21/17.
   */
-class TestUtils extends FlatSpec {
+class TestUtils extends AnyFlatSpec {
 
   "patching a dataset with an overlapping dataset" should "combine them correctly" in {
     val target = 1 to 10 toList

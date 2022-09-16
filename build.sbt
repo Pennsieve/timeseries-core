@@ -1,16 +1,22 @@
+import CrossCompilationUtil.getVersion
+
 name := "timeseries-core"
 
 organization := "com.pennsieve"
 
-scalaVersion := "2.12.7"
+lazy val scala212 = "2.12.7"
+lazy val scala213 = "2.13.8"
+lazy val supportedScalaVersions = List(scala212, scala213)
+
+scalaVersion := scala212
+
+crossScalaVersions := supportedScalaVersions
 
 version := sys.props.get("version").getOrElse("SNAPSHOT")
 
-val pennsieveCoreVersion = "com.pennsieve-SNAPSHOT"
+scalacOptions ++= Seq("-deprecation", "-feature")
 
 resolvers ++= Seq(
-  "Spray" at "https://repo.spray.io",
-  Resolver.bintrayRepo("commercetools", "maven"),
   Resolver.typesafeRepo("releases"),
   "JBoss" at "https://repository.jboss.org/",
   "Pennsieve Maven Proxy" at "https://nexus.pennsieve.cc/repository/maven-public",
@@ -19,15 +25,22 @@ resolvers ++= Seq(
   Resolver.sonatypeRepo("releases")
 )
 
+lazy val pennsieveCoreVersion = "200-8837bd1"
+lazy val scalikejdbcVersion = "3.5.0"
+lazy val akkaActorVersion = SettingKey[String]("akkaActorVersion")
+lazy val akkaActor212Version = "2.6.5"
+lazy val akkaActor213Version = "2.6.8"
+
 libraryDependencies ++= Seq(
-  "com.typesafe.akka" %% "akka-actor" % "2.6.5",
+  "com.typesafe.akka" %% "akka-actor" % getVersion(scalaVersion.value,
+    akkaActor212Version,
+    akkaActor213Version),
   "org.postgresql" % "postgresql" % "9.4-1200-jdbc41",
-  "org.scalikejdbc" %% "scalikejdbc" % "2.5.0",
-  "org.scalikejdbc" %% "scalikejdbc-config" % "2.5.0",
-  "org.scalatest" %% "scalatest" % "3.0.3" % "test",
-  "org.scalikejdbc" %% "scalikejdbc-test" % "2.5.0" % "test",
-  "org.scalamock" %% "scalamock-scalatest-support" % "3.4.2" % "test",
-  "com.dimafeng" %% "testcontainers-scala" % "0.38.4" % "test",
+  "org.scalikejdbc" %% "scalikejdbc" % scalikejdbcVersion,
+  "org.scalikejdbc" %% "scalikejdbc-config" % scalikejdbcVersion,
+  "org.scalatest" %% "scalatest" % "3.2.12" % "test",
+  "org.scalikejdbc" %% "scalikejdbc-test" % scalikejdbcVersion % "test",
+  "com.dimafeng" %% "testcontainers-scala" % "0.40.1" % "test",
   "com.pennsieve" %% "pennsieve-core" % s"$pennsieveCoreVersion" % "test" classifier "tests"
 )
 
@@ -49,32 +62,31 @@ credentials += Credentials(
   sys.env("PENNSIEVE_NEXUS_PW")
 )
 
-logBuffered in Test := false
+Test / logBuffered := false
 
-publishArtifact in Test := true
+Test / publishArtifact := true
 
-addCompilerPlugin("org.psywerx.hairyfotr" %% "linter" % "0.1.17")
-
-PB.targets in Compile := Seq(
-  scalapb.gen(flatPackage = true) -> (sourceManaged in Compile).value
+Compile / PB.targets := Seq(
+  scalapb.gen(flatPackage = true) -> (Compile / sourceManaged).value
 )
 
 // sbt-docker configuration
 enablePlugins(sbtdocker.DockerPlugin)
 
-buildOptions in docker := BuildOptions(
+docker / buildOptions := BuildOptions(
   cache = false
 )
 
-dockerfile in docker := {
-  val jarFile: File = sbt.Keys.`package`.in(Compile, packageBin).value
+docker / dockerfile := {
+  val jarFile: File = (Compile / packageBin / sbt.Keys.`package`).value
+  //val jarFile: File = sbt.Keys.`package`.in(Compile, packageBin).value
   new Dockerfile {
     from("java")
     copy(jarFile, "target/scala-2.11/timeseries-core_2.11-1.1.1-SNAPSHOT.jar")
   }
 }
 
-imageNames in docker := Seq(
+docker / imageNames := Seq(
   ImageName(s"${organization.value}/api:latest"),
   ImageName(
     s"${organization.value}/api:${sys.props.getOrElse("docker-version", version.value)}"
