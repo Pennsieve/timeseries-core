@@ -1,3 +1,5 @@
+import CrossCompilationUtil.getVersion
+
 name := "timeseries-core"
 
 organization := "com.pennsieve"
@@ -23,11 +25,16 @@ resolvers ++= Seq(
   Resolver.sonatypeRepo("releases")
 )
 
-lazy val pennsieveCoreVersion = "195-8c3149d"
+lazy val pennsieveCoreVersion = "200-8837bd1"
 lazy val scalikejdbcVersion = "3.5.0"
+lazy val akkaActorVersion = SettingKey[String]("akkaActorVersion")
+lazy val akkaActor212Version = "2.6.5"
+lazy val akkaActor213Version = "2.6.8"
 
 libraryDependencies ++= Seq(
-  "com.typesafe.akka" %% "akka-actor" % "2.6.5",
+  "com.typesafe.akka" %% "akka-actor" % getVersion(scalaVersion.value,
+    akkaActor212Version,
+    akkaActor213Version),
   "org.postgresql" % "postgresql" % "9.4-1200-jdbc41",
   "org.scalikejdbc" %% "scalikejdbc" % scalikejdbcVersion,
   "org.scalikejdbc" %% "scalikejdbc-config" % scalikejdbcVersion,
